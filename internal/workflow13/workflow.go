@@ -91,13 +91,12 @@ func (s *Service) VerifyDocument(documentID, reviewer string, sequence int) (res
 		return ReviewResult{}, err
 	}
 	if decision == domain.DecisionReject {
+		// Surface a stable business rejection to the caller so the interface
+		// reports the rejection status and its reason instead of masking it
+		// behind a success result. The persisted document and review already
+		// record the rejection, so only the returned error is conveyed.
 		err = errors.New(reason)
 	}
-	defer func() {
-		if sequence == 7 && err != nil {
-			err = nil
-		}
-	}()
 	result = ReviewResult{Document: document, Review: review}
 	return result, err
 }
