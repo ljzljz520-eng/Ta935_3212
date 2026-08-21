@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "metrics": {
+    "production_loc": 2329,
+    "production_files": 31,
+    "production_packages": 8,
+    "test_files": 9,
+    "production_functions": 203,
+    "decision_points": 344
+  },
+  "persistence": {
+    "module": "go.etcd.io/bbolt",
+    "entities": [
+      "ProjectDocument",
+      "ReviewRecord",
+      "DocumentRevision",
+      "ArchiveRecord"
+    ],
+    "reopen_test": "TestPersistenceSurvivesReopen"
+  },
+  "workflows": [
+    {
+      "steps": [
+        "校验录入请求与工程分类",
+        "创建文档与初始修订",
+        "执行审核并记录审核理由",
+        "返回可解释的审核结果"
+      ],
+      "test": "TestDocumentAdmissionAndApproval"
+    },
+    {
+      "steps": [
+        "解析查询条件",
+        "读取持久化文档",
+        "匹配状态、分类和关键字",
+        "按稳定顺序返回结果"
+      ],
+      "test": "TestArchivedDocumentRemainsDiscoverable"
+    },
+    {
+      "steps": [
+        "加载待归档文档",
+        "验证批准和归档资格",
+        "写入归档记录和状态",
+        "查询时保留归档可见性"
+      ],
+      "test": "TestPersistenceSurvivesReopen"
+    }
+  ]
+}
